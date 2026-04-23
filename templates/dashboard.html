@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>📊 Dashboard</h1>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card total">
+    <div class="stat-number">{{ total }}</div>
+    <div class="stat-label">Total de Tareas</div>
+  </div>
+  <div class="stat-card pending">
+    <div class="stat-number">{{ pending }}</div>
+    <div class="stat-label">Pendientes</div>
+  </div>
+  <div class="stat-card done">
+    <div class="stat-number">{{ completed }}</div>
+    <div class="stat-label">Completadas</div>
+  </div>
+</div>
+
+<div class="priority-section">
+  <h2>Por Prioridad</h2>
+  <div class="priority-bars">
+    {% for p, count in by_priority.items() %}
+    <div class="priority-row">
+      <span class="prio-label">{{ p | upper }}</span>
+      <div class="bar-wrap">
+        <div class="bar bar-{{ p }}"
+             style="width: {% if total > 0 %}{{ (count / total * 100) | int }}%{% else %}0%{% endif %}">
+        </div>
+      </div>
+      <span class="prio-count">{{ count }}</span>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% if tasks %}
+<div class="recent-section">
+  <h2>Últimas 5 tareas</h2>
+  <table class="task-table">
+    <thead>
+      <tr><th>Título</th><th>Prioridad</th><th>Estado</th><th>Vencimiento</th></tr>
+    </thead>
+    <tbody>
+      {% for task in tasks[-5:] | reverse %}
+      <tr class="{% if task.completed %}row-done{% endif %}">
+        <td>{{ task.title }}</td>
+        <td><span class="badge badge-{{ task.priority }}">{{ task.priority }}</span></td>
+        <td>{% if task.completed %}✅ Hecha{% else %}⏳ Pendiente{% endif %}</td>
+        <td>{{ task.due_date or '—' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+{% endblock %}

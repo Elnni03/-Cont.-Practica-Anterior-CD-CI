@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}Inicio — Gestor de Tareas{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Mis Tareas</h1>
+  <a href="{{ url_for('create') }}" class="btn btn-primary">+ Nueva Tarea</a>
+</div>
+
+<div class="filter-bar">
+  <a href="{{ url_for('index', status='all') }}"
+     class="filter-btn {% if filter == 'all' %}active{% endif %}">Todas</a>
+  <a href="{{ url_for('index', status='pending') }}"
+     class="filter-btn {% if filter == 'pending' %}active{% endif %}">Pendientes</a>
+  <a href="{{ url_for('index', status='completed') }}"
+     class="filter-btn {% if filter == 'completed' %}active{% endif %}">Completadas</a>
+</div>
+
+{% if tasks %}
+  <div class="task-list">
+    {% for task in tasks %}
+    <div class="task-card priority-{{ task.priority }} {% if task.completed %}completed{% endif %}">
+      <div class="task-header">
+        <div class="task-title-row">
+          <form method="POST" action="{{ url_for('toggle', task_id=task.id) }}" class="inline-form">
+            <button type="submit" class="toggle-btn" title="Marcar como completada">
+              {% if task.completed %}✅{% else %}⬜{% endif %}
+            </button>
+          </form>
+          <h3 class="task-title">{{ task.title }}</h3>
+        </div>
+        <span class="badge badge-{{ task.priority }}">{{ task.priority | upper }}</span>
+      </div>
+
+      {% if task.description %}
+        <p class="task-desc">{{ task.description }}</p>
+      {% endif %}
+
+      <div class="task-meta">
+        {% if task.due_date %}
+          <span>📅 Vence: {{ task.due_date }}</span>
+        {% endif %}
+        <span>🕐 Creada: {{ task.created_at }}</span>
+      </div>
+
+      <div class="task-actions">
+        <a href="{{ url_for('edit', task_id=task.id) }}" class="btn btn-sm btn-edit">✏️ Editar</a>
+        <form method="POST" action="{{ url_for('delete', task_id=task.id) }}"
+              class="inline-form" onsubmit="return confirm('¿Eliminar esta tarea?')">
+          <button type="submit" class="btn btn-sm btn-delete">🗑️ Eliminar</button>
+        </form>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="empty-state">
+    <p>🗂️ No hay tareas que mostrar.</p>
+    <a href="{{ url_for('create') }}" class="btn btn-primary">Crear primera tarea</a>
+  </div>
+{% endif %}
+{% endblock %}

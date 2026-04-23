@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Editar Tarea{% endblock %}
+
+{% block content %}
+<div class="form-page">
+  <h1>Editar Tarea</h1>
+  <form method="POST" action="{{ url_for('edit', task_id=task.id) }}" class="task-form">
+    <div class="form-group">
+      <label for="title">Título *</label>
+      <input type="text" id="title" name="title"
+             value="{{ task.title }}" required maxlength="120"/>
+    </div>
+    <div class="form-group">
+      <label for="description">Descripción</label>
+      <textarea id="description" name="description" rows="3">{{ task.description }}</textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="due_date">Fecha de vencimiento</label>
+        <input type="date" id="due_date" name="due_date" value="{{ task.due_date }}"/>
+      </div>
+      <div class="form-group">
+        <label for="priority">Prioridad</label>
+        <select id="priority" name="priority">
+          <option value="baja"  {% if task.priority == 'baja'  %}selected{% endif %}>🟢 Baja</option>
+          <option value="media" {% if task.priority == 'media' %}selected{% endif %}>🟡 Media</option>
+          <option value="alta"  {% if task.priority == 'alta'  %}selected{% endif %}>🔴 Alta</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-actions">
+      <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancelar</a>
+      <button type="submit" class="btn btn-primary">Actualizar Tarea</button>
+    </div>
+  </form>
+</div>
+{% endblock %}
